@@ -124,7 +124,7 @@ int main(void) {
     }
 
     if (curState == INCOMMENT || curState == OUTASTERISK) {
-        fprintf(stderr, "Error: line %d: unterminated comment\n");
+        fprintf(stderr, "Error: line %d: unterminated comment\n", commentStart);
     }
 
     return 0;

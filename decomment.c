@@ -46,26 +46,14 @@ enum State spchar(int c){
 enum State inslash(int c){
     if (c == '*') {
         return INASTERISK;
-    } else if (c == '/') {
-        putchar('/');
-        return INSLASH;
     } else {
         putchar('/');
-        putchar(c);
-        return NORMAL;
+        return normal(c);
     }
 }
 
 enum State outslash(int c){
-    if (c == '"' || c == '\'') {
-        putchar(c);
-        return INQUOTE;
-    } else if (c == '/') {
-        return INSLASH;
-    } else {
-        putchar(c);
-        return NORMAL;
-    }
+    return normal(c);
 }
 
 enum State inasterisk(int c){
@@ -135,6 +123,8 @@ int main(void) {
 
     if (curState == INCOMMENT || curState == OUTASTERISK) {
         fprintf(stderr, "Error: line %d: unterminated comment\n", commentStart);
+    } else if (curState == INSLASH) {
+        putchar('/');
     }
 
     return 0;

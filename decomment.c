@@ -46,24 +46,34 @@ enum State spchar(int c){
 enum State inslash(int c){
     if (c == '*') {
         return INASTERISK;
+    } else if (c == '/') {
+        putchar('/');
+        return INSLASH;
     } else {
         putchar('/');
         putchar(c);
-        return INCOMMENT;
+        return NORMAL;
     }
 }
 
 enum State outslash(int c){
-    putchar(' ');
-    putchar(c);
-    return NORMAL;
+    if (c == '"' || c == '\'') {
+        putchar(c);
+        return INQUOTE;
+    } else if (c == '/') {
+        return INSLASH;
+    } else {
+        putchar(c);
+        return NORMAL;
+    }
 }
 
 enum State inasterisk(int c){
+    putchar(' ');
     if (c == '*') {
         return OUTASTERISK;
     } else if (c == '\n') {
-        putchar(c);
+        putchar('\n');
         return INCOMMENT;
     } else {
         return INCOMMENT;

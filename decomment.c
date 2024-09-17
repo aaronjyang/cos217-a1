@@ -1,13 +1,13 @@
 #include <stdio.h>
 
-enum State {NORMAL, INQUOTE, INCOMMENT, SPCHAR, CSLASH, CASTERISK};
+enum State {NORMAL, INQUOTE, INCOMMENT, SPCHAR, INSLASH, OUTSLASH, INASTERISK, OUTASTERISK};
 
 enum State normal(int c){
     if (c == '"' || c == '\'') {
         putchar(c);
         return INQUOTE;
     } else if (c == '/') {
-        return CSLASH;
+        return INSLASH;
     } else {
         putchar(c);
         return NORMAL;
@@ -28,34 +28,58 @@ enum State inquote(int c){
 
 enum State incomment(int c){
     if (c == '*') {
-        return CASTERISK;
+        return OUTASTERISK;
+    } else if (c == '\n') {
+        putchar(c);
+        return INCOMMENT;
     } else {
         return INCOMMENT;
     }
 }
 
 enum State spchar(int c){
+    putchar('\\');
     putchar(c);
     return INQUOTE;
 }
 
-enum State cslash(int c){
+enum State inslash(int c){
     if (c == '*') {
-        return CASTERISK;
+        return INASTERISK;
     } else {
         putchar('/');
         putchar(c);
-        return NORMAL;
+        return INCOMMENT;
     }
 }
 
-enum State casterisk(int c){
+enum State outslash(int c){
+    putchar(' ');
+    putchar(c);
+    return NORMAL;
+}
+
+enum State inasterisk(int c){
     if (c == '*') {
-        putchar('*');
-        return CASTERISK;
-    } else {
+        return OUTASTERISK;
+    } else if (c == '\n') {
         putchar(c);
-        return NORMAL;
+        return INCOMMENT;
+    } else {
+        return INCOMMENT;
+    }
+}
+
+enum State outasterisk(int c){
+    if (c == '*') {
+        return OUTASTERISK;
+    } else if (c == '/') {
+        return OUTSLASH;
+    } else if (c == '\n') {
+        putchar(c);
+        return INCOMMENT;
+    } else {
+        return INCOMMENT;
     }
 }
 
@@ -66,22 +90,28 @@ int main(void) {
     while ((c = getchar()) != EOF) {
         switch (curState) {
             case NORMAL:
-                normal(c);
+                curState = normal(c);
                 break;
             case INQUOTE:
-                inquote(c);
+                curState = inquote(c);
                 break;
             case INCOMMENT:
-                incomment(c);
+                curState = incomment(c);
                 break;
             case SPCHAR:
-                spchar(c);
+                curState = spchar(c);
                 break;
-            case CSLASH:
-                cslash(c);
+            case INSLASH:
+                curState = inslash(c);
                 break;
-            case CASTERISK:
-                casterisk(c);
+            case OUTSLASH:
+                curState = outslash(c);
+                break;
+            case INASTERISK:
+                curState = inasterisk(c);
+                break;
+            case OUTASTERISK:
+                curState = outasterisk(c);
                 break;
         }
     }

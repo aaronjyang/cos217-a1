@@ -115,6 +115,8 @@ int main(void) {
         return 1;
     } else if (curState == INSLASH) {
         putchar('/');
+    } else if (curState == SPCHAR) {
+        putchar('\\');
     }
 
     return 0;

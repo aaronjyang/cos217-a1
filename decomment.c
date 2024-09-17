@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-enum State {NORMAL, INQUOTE, INCOMMENT, SPCHAR, INSLASH, OUTSLASH, INASTERISK, OUTASTERISK};
+enum State {NORMAL, INQUOTE, INCOMMENT, SPCHAR, INSLASH, OUTASTERISK};
 
 enum State normal(int c){
     if (c == '"' || c == '\'') {
@@ -45,26 +45,17 @@ enum State spchar(int c){
 
 enum State inslash(int c){
     if (c == '*') {
-        return INASTERISK;
+        putchar(' ');
+        return INCOMMENT;
     } else {
         putchar('/');
         return normal(c);
     }
 }
 
-enum State outslash(int c){
-    return normal(c);
-}
-
-enum State inasterisk(int c){
-    putchar(' ');
-    return incomment(c);
-}
-
-
 enum State outasterisk(int c){
     if (c == '/') {
-        return OUTSLASH;
+        return NORMAL;
     } else {
         return incomment(c);
     }
@@ -89,6 +80,7 @@ int main(void) {
                 curState = inquote(c);
                 break;
             case INCOMMENT:
+                commentStart = lineCount;
                 curState = incomment(c);
                 break;
             case SPCHAR:
@@ -96,13 +88,6 @@ int main(void) {
                 break;
             case INSLASH:
                 curState = inslash(c);
-                break;
-            case OUTSLASH:
-                curState = outslash(c);
-                break;
-            case INASTERISK:
-                commentStart = lineCount;
-                curState = inasterisk(c);
                 break;
             case OUTASTERISK:
                 curState = outasterisk(c);

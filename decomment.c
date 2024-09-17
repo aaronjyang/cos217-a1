@@ -30,7 +30,7 @@ enum State incomment(int c){
     if (c == '*') {
         return OUTASTERISK;
     } else if (c == '\n') {
-        putchar(c);
+        putchar('\n');
         return INCOMMENT;
     } else {
         return INCOMMENT;
@@ -58,29 +58,18 @@ enum State outslash(int c){
 
 enum State inasterisk(int c){
     putchar(' ');
-    if (c == '*') {
-        return OUTASTERISK;
-    } else if (c == '\n') {
-        putchar('\n');
-        return INCOMMENT;
-    } else {
-        return INCOMMENT;
-    }
+    return incomment(c);
 }
+
 
 enum State outasterisk(int c){
-    if (c == '*') {
-        return OUTASTERISK;
-    } else if (c == '/') {
+    if (c == '/') {
         return OUTSLASH;
-    } else if (c == '\n') {
-        putchar(c);
-        return INCOMMENT;
     } else {
-        return INCOMMENT;
+        return incomment(c);
     }
 }
-
+    
 int main(void) {
     int c; 
     int commentStart;
@@ -122,6 +111,7 @@ int main(void) {
     }
 
     if (curState == INCOMMENT || curState == OUTASTERISK) {
+        return 1;
         fprintf(stderr, "Error: line %d: unterminated comment\n", commentStart);
     } else if (curState == INSLASH) {
         putchar('/');

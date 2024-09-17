@@ -111,8 +111,8 @@ int main(void) {
     }
 
     if (curState == INCOMMENT || curState == OUTASTERISK) {
-        return 1;
         fprintf(stderr, "Error: line %d: unterminated comment\n", commentStart);
+        return 1;
     } else if (curState == INSLASH) {
         putchar('/');
     }

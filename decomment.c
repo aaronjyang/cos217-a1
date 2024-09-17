@@ -1,11 +1,14 @@
 #include <stdio.h>
 
-enum State {NORMAL, QUOTE, COMMENT, SPCHAR, INSLASH, OUTASTERISK};
+enum State {NORMAL, QUOTE, CHARLIT, COMMENT, QSPCHAR, CSPCHAR, INSLASH, OUTASTERISK};
 
 enum State normal(int c){
-    if (c == '"' || c == '\'') {
+    if (c == '"') {
         putchar(c);
         return QUOTE;
+    } else if (c == '\''){
+        putchar(c);
+        return CHARLIT;
     } else if (c == '/') {
         return INSLASH;
     } else {
@@ -16,13 +19,25 @@ enum State normal(int c){
 
 enum State quote(int c){
     if (c == '\\') {
-        return SPCHAR;
-    } else if (c == '\'' ||c == '\"') {
+        return QSPCHAR;
+    } else if (c == '"') {
         putchar(c);
         return NORMAL;
     } else {
         putchar(c);
         return QUOTE;
+    }
+}
+
+enum State charlit(int c){
+    if (c == '\\') {
+        return CSPCHAR;
+    } else if (c == '\'') {
+        putchar(c);
+        return NORMAL;
+    } else {
+        putchar(c);
+        return CHARLIT;
     }
 }
 
@@ -37,10 +52,16 @@ enum State comment(int c){
     }
 }
 
-enum State spchar(int c){
+enum State qspchar(int c){
     putchar('\\');
     putchar(c);
     return QUOTE;
+}
+
+enum State cspchar(int c){
+    putchar('\\');
+    putchar(c);
+    return CHARLIT;
 }
 
 enum State inslash(int c){
@@ -79,11 +100,17 @@ int main(void) {
             case QUOTE:
                 curState = quote(c);
                 break;
+            case CHARLIT:
+                curState = charlit(c);
+                break;
             case COMMENT:
                 curState = comment(c);
                 break;
-            case SPCHAR:
-                curState = spchar(c);
+            case QSPCHAR:
+                curState = qspchar(c);
+                break;
+            case CSPCHAR:
+                curState = cspchar(c);
                 break;
             case INSLASH:
                 curState = inslash(c);
@@ -100,7 +127,7 @@ int main(void) {
         return 1;
     } else if (curState == INSLASH) {
         putchar('/');
-    } else if (curState == SPCHAR) {
+    } else if (curState == QSPCHAR || curState == CSPCHAR) {
         putchar('\\');
     }
 

@@ -17,7 +17,7 @@ enum State normal(int c){
 enum State inquote(int c){
     if (c == '\\') {
         return SPCHAR;
-    } else if (c == '\'' ||c == '\'') {
+    } else if (c == '\'' ||c == '\"') {
         putchar(c);
         return NORMAL;
     } else {
@@ -85,9 +85,15 @@ enum State outasterisk(int c){
 
 int main(void) {
     int c; 
+    int commentStart;
+    int lineCount = 1;
     enum State curState = NORMAL;
 
     while ((c = getchar()) != EOF) {
+        if (c == '\n') {
+            lineCount++;
+        }
+
         switch (curState) {
             case NORMAL:
                 curState = normal(c);
@@ -108,6 +114,7 @@ int main(void) {
                 curState = outslash(c);
                 break;
             case INASTERISK:
+                commentStart = lineCount;
                 curState = inasterisk(c);
                 break;
             case OUTASTERISK:
@@ -115,5 +122,10 @@ int main(void) {
                 break;
         }
     }
+
+    if (curState == INCOMMENT || curState == OUTASTERISK) {
+        fprintf(stderr, "Error: line %d: unterminated comment\n");
+    }
+
     return 0;
 }

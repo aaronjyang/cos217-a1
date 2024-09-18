@@ -1,0 +1,41 @@
+------------------------------------------------------------------------
+Textual Representation of decommenter
+------------------------------------------------------------------------
+
+NORMAL (accept) <--- start state
+    ": QUOTE
+    ': QUOTE
+    /: INSLASH
+    other: NORMAL
+
+QUOTE (accept)
+    \: QSPCHAR
+    ": NORMAL
+    other: QUOTE
+
+CHARLIT (accept)
+    \: CSPCHAR
+    ': NORMAL
+    other: CHARLIT
+
+COMMENT (reject)
+    *: OUTASTERISK
+    other: COMMENT
+
+QSPCHAR (accept)
+    other: QUOTE
+    
+CSPCHAR (accept)
+    other: CHARLIT
+
+INSLASH (accept)
+    *: COMMENT
+    ": QUOTE
+    ': QUOTE
+    /: INSLASH
+    other: NORMAL
+
+OUTASTERISK (reject)
+    /: NORMAL
+    *: OUTASTERISK
+    other: COMMENT

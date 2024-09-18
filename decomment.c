@@ -1,7 +1,12 @@
 #include <stdio.h>
 
-enum State {NORMAL, QUOTE, CHARLIT, COMMENT, QSPCHAR, CSPCHAR, INSLASH, OUTASTERISK};
+/* Defines all relevant states in DFA as constants*/
+enum State {NORMAL, QUOTE, CHARLIT, COMMENT, QSPCHAR, CSPCHAR, INSLASH,
+    OUTASTERISK};
 
+/* Implements NORMAl state behavior. Checks for beginning of string, character 
+   literal, or comment and returns corresponding state. Writes c to stdout 
+   unless it is potentially the beginning of a comment */
 enum State normal(int c){
     if (c == '"') {
         putchar(c);
@@ -17,6 +22,9 @@ enum State normal(int c){
     }
 }
 
+/* Implements QUOTE state behavior. Checks for escape character \ or end of 
+   string ". Returns corresponding state and writes c to stdout unless it is a 
+   special char */
 enum State quote(int c){
     if (c == '\\') {
         return QSPCHAR;
@@ -29,6 +37,9 @@ enum State quote(int c){
     }
 }
 
+/* Implements CHARLIT state behavior. Checks for escape character \ or end of 
+   character literal '. Returns corresponding state and writes c to stdout 
+   unless it is a special char */
 enum State charlit(int c){
     if (c == '\\') {
         return CSPCHAR;
@@ -41,6 +52,8 @@ enum State charlit(int c){
     }
 }
 
+/* Implements COMMENT state behavior. Checks for asterisks and newline 
+   characters. Only prints newline characters. */
 enum State comment(int c){
     if (c == '*') {
         return OUTASTERISK;
@@ -52,18 +65,24 @@ enum State comment(int c){
     }
 }
 
+/* Implements QSPCHAR (quote special character) state behavior. Prints \ and c 
+   no matter what and then returns to QUOTE state */
 enum State qspchar(int c){
     putchar('\\');
     putchar(c);
     return QUOTE;
 }
 
+/* Implements CSPCHAR (character literal special character) state behavior.
+   Prints \ and c no matter what and then returns to QUOTE state */
 enum State cspchar(int c){
     putchar('\\');
     putchar(c);
     return CHARLIT;
 }
 
+/* Implements INSLASH state behavior. Checks for start of comment and if so, 
+   returns COMMENT state. Otherwise, return NORMAL. */
 enum State inslash(int c){
     if (c == '*') {
         putchar(' ');
@@ -74,6 +93,8 @@ enum State inslash(int c){
     }
 }
 
+/* Implements OUTASTERISK state behavior. Checks for end of comment and returns
+   NORMAL if found. Else, return COMMENT */
 enum State outasterisk(int c){
     if (c == '/') {
         return NORMAL;
@@ -82,6 +103,10 @@ enum State outasterisk(int c){
     }
 }
     
+/* Reads text from stdin. Removes comments, maintains quotes & newlines, 
+   and returns error messages with line numbers when comments are unclosed. 
+   Prints output to stdout and errors to stderr. Returns 1 if there is an
+   unclosed comment and 1 otherwise. */
 int main(void) {
     int c; 
     int commentStart;

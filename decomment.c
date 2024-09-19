@@ -6,7 +6,8 @@ enum State {NORMAL, QUOTE, CHARLIT, COMMENT, QSPCHAR, CSPCHAR, INSLASH,
 
 /* Implements NORMAl state behavior. Checks for beginning of string, character 
    literal, or comment and returns corresponding state. Writes c to stdout 
-   unless it is potentially the beginning of a comment */
+   unless it is potentially the beginning of a comment Takes in next character 
+   represented by int c and outputs next enum State */
 enum State normal(int c){
     if (c == '"') {
         putchar(c);
@@ -24,7 +25,8 @@ enum State normal(int c){
 
 /* Implements QUOTE state behavior. Checks for escape character \ or end of 
    string ". Returns corresponding state and writes c to stdout unless it is a 
-   special char */
+   special char. Takes in next character represented by int c and outputs next
+   enum State */
 enum State quote(int c){
     if (c == '\\') {
         return QSPCHAR;
@@ -39,7 +41,8 @@ enum State quote(int c){
 
 /* Implements CHARLIT state behavior. Checks for escape character \ or end of 
    character literal '. Returns corresponding state and writes c to stdout 
-   unless it is a special char */
+   unless it is a special char Takes in next character represented by int c 
+   and outputs next enum State  */
 enum State charlit(int c){
     if (c == '\\') {
         return CSPCHAR;
@@ -53,7 +56,8 @@ enum State charlit(int c){
 }
 
 /* Implements COMMENT state behavior. Checks for asterisks and newline 
-   characters. Only prints newline characters. */
+   characters. Only prints newline characters. Takes in next character 
+   represented by int c and outputs next enum State */
 enum State comment(int c){
     if (c == '*') {
         return OUTASTERISK;
@@ -66,7 +70,8 @@ enum State comment(int c){
 }
 
 /* Implements QSPCHAR (quote special character) state behavior. Prints \ and c 
-   no matter what and then returns to QUOTE state */
+   no matter what and then returns to QUOTE state. Takes in next character 
+   represented by int c and outputs next enum State */
 enum State qspchar(int c){
     putchar('\\');
     putchar(c);
@@ -74,7 +79,8 @@ enum State qspchar(int c){
 }
 
 /* Implements CSPCHAR (character literal special character) state behavior.
-   Prints \ and c no matter what and then returns to QUOTE state */
+   Prints \ and c no matter what and then returns to QUOTE state. Takes in next
+   character represented by int c and outputs next enum State */
 enum State cspchar(int c){
     putchar('\\');
     putchar(c);
@@ -82,7 +88,8 @@ enum State cspchar(int c){
 }
 
 /* Implements INSLASH state behavior. Checks for start of comment and if so, 
-   returns COMMENT state. Otherwise, return NORMAL. */
+   returns COMMENT state. Otherwise, return NORMAL. Takes in next character 
+   represented by int c and outputs next enum State */
 enum State inslash(int c){
     if (c == '*') {
         putchar(' ');
@@ -94,7 +101,8 @@ enum State inslash(int c){
 }
 
 /* Implements OUTASTERISK state behavior. Checks for end of comment and returns
-   NORMAL if found. Else, return COMMENT */
+   NORMAL if found. Else, return COMMENT. Takes in next character 
+   represented by int c and outputs next enum State */
 enum State outasterisk(int c){
     if (c == '/') {
         return NORMAL;
